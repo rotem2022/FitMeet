@@ -6,9 +6,9 @@ Please note we have a code of conduct, please follow it in all your interactions
 # Pre-Requirements
 To contribute to our community project,please download and install the following:
 
-1.  Vagrant
-2.  VirtualBox
-3.  Git
+1.  [Vagrant](https://www.vagrantup.com/)
+2.  [VirtualBox](https://www.virtualbox.org/)
+3.  [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
 
 **Note: Vagrant may not work on some machines (such as Apple M1-based machines), so please make sure to find a suitable solution.** 
 
@@ -40,6 +40,19 @@ To contribute to our community project,please download and install the following
 1. Allways provide constructive feedback
 2. Be precise about what needs to be improved
 3. Visualize the bigger picture
+
+# Code Testing
+
+This project uses Pytest as its test framework.
+
+* [Pytest - Quick guide](https://docs.pytest.org/en/7.2.x/getting-started.html)
+* Please note that Pytest is already installed in this project's virtual environment.
+
+# Coding Conventions
+Before adding code to our project please note that we use PEP8 standards & Flake8 test checking. You can read about it in the reference below.
+
+* [PEP8](https://peps.python.org/pep-0008/)
+* [Flake8](https://flake8.pycqa.org/en/latest/)
 
 # Issues
 
