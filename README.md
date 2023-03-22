@@ -41,7 +41,7 @@ A step by step series that tell you how to get FitMeet up and running
 ## Contribute
 
 In order to contribute, please refer to the contributing guide.<br />
-* [CONTRIBUTING.md](CONTRIBUTING.md)
+* [CONTRIBUTING.md](https://github.com/redhat-beyond/FitMeet/blob/main/CONTRIBURING.md)
 
 ## Our Team
 
