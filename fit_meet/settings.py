@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'location.apps.LocationConfig',
     'category.apps.CategoryConfig',
     'category_location.apps.CategoryLocationConfig'
+    'poll.apps.PollConfig'
 ]
 
 MIDDLEWARE = [
