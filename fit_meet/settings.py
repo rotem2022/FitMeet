@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'poll.apps.PollConfig',
     'event.apps.EventConfig',
     'teams.apps.TeamsConfig',
+    'poll_suggestion.apps.PollSuggestionConfig',
 ]
 
 MIDDLEWARE = [
