@@ -2,6 +2,8 @@ from django.db import models
 from category.models import Category
 from location.models import Location
 from poll.models import Poll
+from users.models import Profile
+from teams.models import Teams
 
 
 class Event(models.Model):
@@ -17,3 +19,10 @@ class Event(models.Model):
 
     def __str__(self) -> str:
         return self.name
+
+
+class UserEvent(models.Model):
+    userID = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    eventID = models.ForeignKey(Event, on_delete=models.CASCADE)
+    teamID = models.ForeignKey(Teams, on_delete=models.CASCADE)
+    isEventAdmin = models.BooleanField(default=False)
