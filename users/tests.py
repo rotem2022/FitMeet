@@ -12,12 +12,15 @@ PHONE_NUMBER_NEW = '0987654321'
 @pytest.fixture
 def user1():
     user = get_user_model().objects.create(username=USER_NAME, password=USER_PASSWORD)
+    user.save()
     return user
 
 
 @pytest.fixture
 def profile_user1(user1):
-    return Profile.objects.create(user=user1, date_of_birth=date.today(), phone_number=PHONE_NUMBER)
+    profile_user = Profile.objects.create(user=user1, date_of_birth=date.today(), phone_number=PHONE_NUMBER)
+    profile_user.save()
+    return profile_user
 
 
 @pytest.mark.django_db()
@@ -42,13 +45,9 @@ class TestProfileModel:
         assert updated_profile.phone_number == PHONE_NUMBER_NEW
 
     def test_delete_profile(self, profile_user1):
-        profile_user1.user.save()
-        profile_user1.save()
         profile_user1.delete()
         assert profile_user1 not in Profile.objects.all()
 
     def test_delete_user_deletes_profile(self, profile_user1):
-        profile_user1.user.save()
-        profile_user1.save()
         profile_user1.user.delete()
         assert profile_user1 not in Profile.objects.all()
