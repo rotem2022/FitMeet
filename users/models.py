@@ -7,3 +7,6 @@ class Profile(models.Model):
     date_of_birth = models.DateTimeField()
     phone_number = models.CharField(max_length=15)
     image_url = models.URLField(max_length=200, blank=True)
+
+    def __str__(self):
+        return self.user.username
