@@ -12,6 +12,12 @@ the original request that resulted in these code changes?*
 
 Resolves #[relevant issue(s), e.g. 37]
 
+#### Test coverage
+
+- [ ] This PR includes new unit and integration tests to go with the code
+  changes
+- [ ] The changes in this PR do not require tests
+
 #### Documentation
 
 - [ ] Docs (e.g. `README`s) were updated in this PR
