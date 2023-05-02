@@ -35,14 +35,16 @@ def category_location1():
 
 @pytest.fixture
 def poll1(category_location1):
-    event = Event.objects.create(category=category_location1.category,
-                                 location=category_location1.location,
-                                 poll=None,
-                                 name=EVENT_NAME,
-                                 max_participants=MAX_PART,
-                                 start_time=DATETIME + timedelta(days=2),
-                                 end_time=DATETIME + timedelta(days=3),
-                                 is_private=IS_PRIVATE,)
+    event = Event(
+        category=category_location1.category,
+        location=category_location1.location,
+        poll=None,
+        name=EVENT_NAME,
+        max_participants=MAX_PART,
+        start_time=DATETIME + timedelta(days=2),
+        end_time=DATETIME + timedelta(days=3),
+        is_private=IS_PRIVATE,
+    )
     event.save()
     poll = Poll.objects.create(event_id=event, max_suggestions=5, end_time=get_default_end_date())
     poll.save()
