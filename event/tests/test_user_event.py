@@ -1,6 +1,6 @@
 from django.utils import timezone
-from .models import UserEvent
-from .models import Event
+from ..models import UserEvent
+from ..models import Event
 import pytest
 from users.models import Profile
 from teams.models import Teams
