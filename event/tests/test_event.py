@@ -101,13 +101,9 @@ def validate_event1(category_location1, user1):
 @pytest.fixture(scope="session")
 def categories1(django_db_blocker) -> List[models.Category]:
     with django_db_blocker.unblock():
-        categories_names = ['Football', 'BasketBall', 'Running', 'Swimming', 'Tennis']
-        categories_lst = []
-        for category_name in categories_names:
-            new_category = models.Category(name=category_name)
-            new_category.save()
-            categories_lst.append(new_category)
-    return categories_lst
+        query_set = models.Category.objects.all()
+        query_set = list(query_set)[:5]
+    return query_set
 
 
 @pytest.fixture(scope="session")
@@ -379,7 +375,7 @@ class TestEvent:
 
     @pytest.mark.parametrize(
         "categories,result",
-        [(['FootBall'], 5), (['FootBall', 'basketball'], 10), (['Tennis', 'running', 'football'], 15), (['Chess'], 0)],
+        [(['FootBall'], 5), (['FootBall', 'basketball'], 10), (['Baseball', 'gym', 'football'], 15), (['Chess'], 0)],
     )
     def test_filter_by_category(self, categories, result, event_data_set):
         query_set = models.Event.manager.search(categories=categories)
