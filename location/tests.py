@@ -19,6 +19,13 @@ STREET_NUMBER_NEW = 2
 INDOOR_NEW = True
 DESCRIPTION_NEW = 'description2'
 
+STATIC_LOCATION_NAME = 'Bloomfield'
+STATIC_CITY = 'Tel-Aviv-Yaffo'
+STATIC_STREET = 'Hatkuma'
+STATIC_STREET_NUMBER = 10
+STATIC_INDOOR = False
+STATIC_DESCRIPTION = 'A soccer field in tel-aviv'
+
 LONG_FIELD = "a" * 45
 EMPTY_FIELD = ''
 SPECIAL_CHARACTERS = re.sub("[&_.,-]", "", string.punctuation)
@@ -99,3 +106,12 @@ class TestLocationModel:
         with pytest.raises(ValidationError):
             location1.update(name=name, city=city, street=street, street_number=street_number, indoor=indoor,
                              description=description)
+
+    def test_static_location(self):
+        location = Location.objects.filter(name='Bloomfield').first()
+        assert location.name == STATIC_LOCATION_NAME
+        assert location.city == STATIC_CITY
+        assert location.street == STATIC_STREET
+        assert location.street_number == STATIC_STREET_NUMBER
+        assert location.indoor == STATIC_INDOOR
+        assert location.description == STATIC_DESCRIPTION
