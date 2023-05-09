@@ -6,13 +6,16 @@ from event.models import Event
 from category.models import Category
 from location.models import Location
 from category_location.models import CategoryLocation
+from poll_suggestion.models import PollSuggestion
+from django.core.exceptions import ValidationError
 
 EVENT_NAME = "weight lifting"
 CATEGORY = "Gym1"
 LOCATION = "Holmes place Netanya"
 MAX_PART = 10
 IS_PRIVATE = False
-DATETIME = datetime.now()
+MAX_SUGEGSTIONS = 5
+DATETIME = timezone.now()
 
 
 @pytest.fixture
@@ -34,7 +37,7 @@ def category_location1():
 
 
 @pytest.fixture
-def poll1(category_location1):
+def event1(category_location1):
     event = Event(
         category=category_location1.category,
         location=category_location1.location,
@@ -46,7 +49,12 @@ def poll1(category_location1):
         is_private=IS_PRIVATE,
     )
     event.save()
-    poll = Poll.objects.create(event_id=event, max_suggestions=5, end_time=get_default_end_date())
+    return event
+
+
+@pytest.fixture
+def poll1(event1):
+    poll = Poll.objects.create(event_id=event1, max_suggestions=MAX_SUGEGSTIONS, end_time=get_default_end_date())
     poll.save()
     return poll
 
@@ -59,8 +67,7 @@ class TestPollModel:
 
     def test_logical_poll_end_time(self, poll1):
         poll_from_db = Poll.objects.get(id=poll1.id)
-        now = timezone.localtime(timezone.now())
-        assert poll_from_db.end_time <= now + timedelta(days=365)
+        assert poll_from_db.end_time <= DATETIME + timedelta(days=365)
 
     def test_poll_end_time_before_event_end_time(self, poll1):
         poll_from_db = Poll.objects.get(id=poll1.id)
@@ -73,3 +80,53 @@ class TestPollModel:
     def test_poll_retrieve_event(self, poll1):
         poll_from_db = Poll.objects.get(id=poll1.id)
         assert poll_from_db.event_id == poll1.event_id
+
+    def test_verify_poll_end_time_raises_validation_error(self, poll1):
+        with pytest.raises(ValidationError) as err:
+            poll1.verify_poll_end_time(
+                event_start_time=poll1.event_id.start_time,
+                poll_end_time=poll1.event_id.start_time + timedelta(hours=1)
+            )
+        assert err.value.message == Poll.invalid_poll_error
+
+    def test_create_poll_with_invalid_end_time(self, event1):
+        with pytest.raises(ValidationError) as err:
+            Poll.create_poll(event=event1,
+                             max_suggestions=5,
+                             end_time=event1.start_time + timedelta(hours=1),
+                             )
+        assert err.value.message == Poll.invalid_poll_error
+
+    def test_create_valid_poll(self, event1):
+        poll = Poll.create_poll(event=event1,
+                                max_suggestions=MAX_SUGEGSTIONS,
+                                end_time=DATETIME,
+                                )
+        assert poll.event_id == event1
+        assert poll.max_suggestions == MAX_SUGEGSTIONS
+        assert poll.end_time == DATETIME
+
+    def test_is_active_false(self, poll1):
+        poll_from_db = Poll.objects.get(id=poll1.id)
+        poll_from_db.end_time = timezone.now() - timedelta(hours=1)
+        poll_from_db.save()
+        assert not poll_from_db.is_active()
+
+    def test_show_suggestions(self, poll1):
+        times = [(datetime.now() + timedelta(minutes=10 * i)).time() for i in range(3)]
+        for time in times:
+            poll_suggestion = PollSuggestion(poll_id=poll1, time=time)
+            poll_suggestion.save()
+
+        suggestions = poll1.show_suggestions()
+        assert suggestions.count() == 3
+
+        suggestion_times = [suggestion.time for suggestion in suggestions]
+        for time in times:
+            assert time in suggestion_times
+
+    def test_time_remaining_positive(self, poll1):
+        poll_from_db = Poll.objects.get(id=poll1.id)
+        time_remaining = poll_from_db.time_remaining()
+        assert time_remaining > timedelta()
+        assert pytest.approx(time_remaining.total_seconds()) == (poll_from_db.end_time - timezone.now()).total_seconds()
