@@ -1,12 +1,70 @@
 from django.db import models, transaction, IntegrityError, DatabaseError
 from django.core.exceptions import ValidationError, ObjectDoesNotExist
+from django.db.models.query import QuerySet, Q
 from django.utils import timezone
+from datetime import datetime
+from typing import Tuple, List
 from category.models import Category
 from location.models import Location
 from category_location.models import CategoryLocation
 from poll.models import Poll
 from users.models import Profile
 from teams.models import Teams
+
+
+class EventQuerySet(models.QuerySet):
+    def search(
+        self,
+        categories: List[str] = None,
+        location_names: List[str] = None,
+        location_cities: List[str] = None,
+        event_size: Tuple[int, bool] = None,
+        start_time: Tuple[datetime, bool] = None,
+    ):
+        lookup = Q()
+        query_set = None
+        if categories:
+            for value in categories:
+                lookup |= Q(category__name__iexact=value)
+            query_set = self.intesect_query_set(lookup=lookup, query_set=query_set)
+            lookup = Q()
+
+        if location_names:
+            for value in location_names:
+                lookup |= Q(location__name__iexact=value)
+            query_set = self.intesect_query_set(lookup=lookup, query_set=query_set)
+            lookup = Q()
+
+        if location_cities:
+            for value in location_cities:
+                lookup |= Q(location__city__iexact=value)
+            query_set = self.intesect_query_set(lookup=lookup, query_set=query_set)
+            lookup = Q()
+
+        if event_size:
+            size, greater_then = event_size
+            if size >= 0 and greater_then:
+                lookup = Q(max_participants__gt=size)
+            elif size >= 0:
+                lookup = Q(max_participants__lte=size)
+            query_set = self.intesect_query_set(lookup=lookup, query_set=query_set)
+
+        if start_time:
+            date_time, greater_then = start_time
+            if date_time is not None and greater_then:
+                lookup = Q(start_time__gt=date_time)
+            elif date_time:
+                lookup = Q(start_time__lte=date_time)
+            query_set = self.intesect_query_set(lookup=lookup, query_set=query_set)
+
+        if query_set is None:
+            return self.all()
+        return query_set
+
+    def intesect_query_set(self, lookup, query_set=None):
+        if query_set is not None:
+            return query_set.intersection(self.filter(lookup))
+        return self.filter(lookup)
 
 
 class EventManager(models.Manager):
@@ -155,6 +213,25 @@ class EventManager(models.Manager):
     def update_location(self, event, location_id):
         self.verify_category_location(category_id=event.category.id, location_id=location_id)
         event.location = Location.objects.get(id=location_id)
+
+    def get_queryset(self) -> QuerySet:
+        return EventQuerySet(self.model, using=self.db)
+
+    def search(
+        self,
+        categories: List[str] = None,
+        location_names: List[str] = None,
+        location_cities: List[str] = None,
+        event_size: Tuple[int, bool] = None,
+        start_time: Tuple[datetime, bool] = None,
+    ):
+        return self.get_queryset().search(
+            categories=categories,
+            location_names=location_names,
+            location_cities=location_cities,
+            event_size=event_size,
+            start_time=start_time,
+        )
 
 
 class Event(models.Model):

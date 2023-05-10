@@ -3,8 +3,8 @@ from django.utils import timezone
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
 import pytest
-from . import models
-
+from typing import List
+from .. import models
 
 EVENT_NAME = "football with friends"
 MAX_PART = 20
@@ -96,6 +96,92 @@ def validate_event1(category_location1, user1):
     )
     event = models.Event.manager.get(id=event_id)
     return event
+
+
+@pytest.fixture(scope="session")
+def categories1(django_db_blocker) -> List[models.Category]:
+    with django_db_blocker.unblock():
+        query_set = models.Category.objects.all()
+        query_set = list(query_set)[:5]
+    return query_set
+
+
+@pytest.fixture(scope="session")
+def locations1(django_db_blocker) -> List[models.Location]:
+    with django_db_blocker.unblock():
+        names = ['Sportech', 'Sami offer stadium', 'Terner stadium', 'Tedi Stadium', 'Bluemfield Stadium']
+        cities = ['Tel Aviv', 'Haifa', 'Beer Sheva', 'Jerusalem', 'Yaffo']
+        locations_lst = []
+        for location_name, city in zip(names, cities):
+            new_location = models.Location(
+                name=location_name, city=city, street='test', street_number=1, indoor=False, description='test'
+            )
+            new_location.save()
+            locations_lst.append(new_location)
+    return locations_lst
+
+
+@pytest.fixture(scope="session")
+def categories_locations1(django_db_blocker, categories1, locations1) -> List[models.CategoryLocation]:
+    with django_db_blocker.unblock():
+        categories_locations = []
+        for category in categories1:
+            for location in locations1:
+                cat_loc = models.CategoryLocation(category=category, location=location)
+                cat_loc.save()
+                categories_locations.append(cat_loc)
+    return categories_locations
+
+
+@pytest.fixture(scope="session")
+def users1(django_db_blocker) -> List[models.Profile]:
+    with django_db_blocker.unblock():
+        users = []
+        for i in range(25):
+            user = User.objects.create_user(username=f'user{i}', password=f'password{i}', email=f'user{i}@example.com')
+            profile = models.Profile(
+                user=user, date_of_birth=timezone.now(), phone_number=f"user{i}", image_url="http://127.0.0.1:8001/"
+            )
+            profile.save()
+            users.append(profile)
+
+    return users
+
+
+@pytest.fixture(scope="session")
+def time_samples(django_db_blocker):
+    with django_db_blocker.unblock():
+        current_time = timezone.now()
+        lst = [
+            current_time + timedelta(days=1),
+            current_time + timedelta(days=3),
+            current_time + timedelta(weeks=1),
+            current_time + timedelta(days=3, weeks=1),
+            current_time + timedelta(weeks=3),
+        ]
+    return lst
+
+
+@pytest.fixture(scope="session")
+def event_data_set(django_db_blocker, categories_locations1, users1, time_samples):
+    with django_db_blocker.unblock():
+        for index, user in enumerate(users1):
+            cat_loc = categories_locations1.pop()
+            start_time = time_samples[index % len(time_samples)]
+            end_time = start_time + timedelta(hours=3)
+            poll_end_time = start_time + timedelta(days=-1)
+            models.Event.manager.create_event(
+                category_id=cat_loc.category.id,
+                location_id=cat_loc.location.id,
+                max_participants=2 * index + 2,
+                name=f'test event {index}',
+                start_time=start_time,
+                end_time=end_time,
+                is_private=index > 15,
+                poll_end_time=poll_end_time,
+                poll_suggestions=3,
+                user_id=user.id,
+            )
 
 
 @pytest.mark.django_db()
@@ -286,3 +372,87 @@ class TestEvent:
     def test_object_deleted(self, validate_event1):
         validate_event1.delete()
         assert validate_event1 not in list(models.Event.manager.all())
+
+    @pytest.mark.parametrize(
+        "categories,result",
+        [(['FootBall'], 5), (['FootBall', 'basketball'], 10), (['Baseball', 'gym', 'football'], 15), (['Chess'], 0)],
+    )
+    def test_filter_by_category(self, categories, result, event_data_set):
+        query_set = models.Event.manager.search(categories=categories)
+        assert len(query_set) == result
+
+    @pytest.mark.parametrize(
+        "location_name, result",
+        [(["Tedi stadium"], 5), (["sportech", "Sami offer stadium"], 10), (["Stantiago Bernabeo stadium"], 0)],
+    )
+    def test_filter_by_location_name(self, location_name, result):
+        query_set = models.Event.manager.search(location_names=location_name)
+        assert len(query_set) == result
+
+    @pytest.mark.parametrize(
+        "cities,result",
+        [
+            (['Tel aviv'], 5),
+            (['tel aviv', 'yaffo'], 10),
+            (['jerusalem', 'Haifa', 'beer sheva'], 15),
+            (['ness ziona'], 0),
+        ],
+    )
+    def test_filter_by_location_city(self, cities, result):
+        query_set = models.Event.manager.search(location_cities=cities)
+        assert len(query_set) == result
+
+    @pytest.mark.parametrize(
+        "event_size,result",
+        [
+            ((8, True), 21),
+            ((20, True), 15),
+            ((50, False), 25),
+            ((1, False), 0),
+        ],
+    )
+    def test_filter_by_event_size(self, event_size, result):
+        query_set = models.Event.manager.search(event_size=event_size)
+        assert len(query_set) == result
+
+    @pytest.mark.parametrize(
+        "event_time,result",
+        [
+            ((timezone.now() + timedelta(days=2), True), 20),
+            ((timezone.now() + timedelta(days=9), True), 10),
+            ((timezone.now() + timedelta(weeks=2), False), 20),
+            ((timezone.now() + timedelta(weeks=4), True), 0),
+        ],
+    )
+    def test_filter_by_event_time(self, event_time, result):
+        query_set = models.Event.manager.search(start_time=event_time)
+        assert len(query_set) == result
+
+    @pytest.mark.parametrize(
+        "categories, location_city,result",
+        [
+            (['FootBall'], ['tel aviv'], 1),
+            (['FootBall', 'Basketball'], ['tel aviv'], 2),
+            (['FootBall'], ['tel aviv', 'beer sheva'], 2),
+            (['chess'], ['bat yam'], 0),
+        ],
+    )
+    def test_filter_by_category_location_city(self, categories, location_city, result):
+        query_set = models.Event.manager.search(categories=categories, location_cities=location_city)
+        assert len(query_set) == result
+
+    @pytest.mark.parametrize(
+        "event_time, event_size,result",
+        [
+            ((timezone.now() + timedelta(days=2), True), (8, True), 17),
+            ((timezone.now() + timedelta(days=9), True), (20, True), 6),
+            ((timezone.now() + timedelta(weeks=2), False), (50, False), 20),
+        ],
+    )
+    def test_filter_by_event_time_and_size(self, event_time, event_size, result):
+        query_set = models.Event.manager.search(event_size=event_size, start_time=event_time)
+        assert len(query_set) == result
+
+    def test_empty_filter(self):
+        query_set = models.Event.manager.search()
+        assert len(query_set) == 25
