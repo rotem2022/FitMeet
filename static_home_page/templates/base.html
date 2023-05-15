@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+<head>
+	<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>FitMeet</title>
+		<link rel="stylesheet" href="{% static "web_page_css.css" %}">
+</head>		
+<body>
+	<header>
+		<h1 style="color: darkcyan;">FitMeet</h1>
+		<nav>
+			<ul>
+				<li><a href="#about">About</a></li>
+				<li><a href="#All Events">All Events</a></li>
+				<li><a href="#Profile">Profile</a></li>
+			</ul>
+		</nav>
+	</header>
+    <div class="container">
+		{% block content %}
+		{% endblock %}
+	</div>
+</body>
+</html>
