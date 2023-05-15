@@ -66,3 +66,10 @@ class TestCategoryModel:
         category_location1 = CategoryLocation.objects.get(id=category_location1.id)
         assert category_location1.category == category2
         assert category_location1.location == location2
+
+    def test_static_category_location(self):
+        category = Category.objects.filter(name="Soccer").first()
+        location = Location.objects.filter(name="Bloomfield").first()
+        category_location = CategoryLocation.objects.filter(category=category, location=location).first()
+        assert category_location.category == category
+        assert category_location.location == location
