@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>{{event.name}} Event</h1>
+<li>Category: {{event.category.name}}</li>
+<li>Location: {{event.location.city}}</li>
+<li>Starts At: {{event.start_time}}</li>
+<li>Ends At: {{event.end_time}}</li>
+<li>Participants : {{event.participants_num}}/{{event.max_participants}}</li>
+{% endblock %}
+{% block poll_info %}{% endblock %}
+{% block teams_info %}{% endblock %}

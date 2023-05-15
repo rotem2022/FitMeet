@@ -1,7 +1,7 @@
-# from django.urls import path
-
-# from . import views
+from django.urls import path
+from . import views
 
 urlpatterns = [
-    # TODO - when we will create views here will be the routing of the application
+    path('create/', views.create_event, name="create_event"),
+    path('info/', views.view_event, name='view_event'),
 ]

@@ -69,9 +69,9 @@ class EventQuerySet(models.QuerySet):
 
 class EventManager(models.Manager):
     invalid_category_location_message = "The pair of category and location is not in category location table"
-    invalid_time_error_message = "Error - event end time cannot be equal or less than start time"
-    invalid_poll_error = "Error- poll end time is late than the event start time"
-    invalid_event_size_error = "Error - the number of max participants exeeds the maximum"
+    invalid_time_error_message = "Event end time cannot be equal or less than start time"
+    invalid_poll_error = "Poll end time is later than the event start time"
+    invalid_event_size_error = "Number of max participants exeeds the maximum"
 
     def __str__(self) -> str:
         return self.name
