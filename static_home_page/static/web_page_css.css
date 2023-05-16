@@ -190,6 +190,7 @@ p { font-size: 26px; }
   text-decoration: none;
   color: white;
 }
+
 @keyframes float {
   0% {
     transform: translateX(0px);
@@ -228,4 +229,72 @@ p { font-size: 26px; }
 
 .form-button:hover {
   background-color: #d1a843;
+}
+
+.form-button:hover {
+  background-color: #d1a843;
+}
+
+.create-event-form-header {
+  margin: 15px;
+}
+
+.create-event-form-container {
+  margin: 20px;
+}
+
+.create-event-form>div {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
+  align-items: center;
+}
+
+.create-event-form>div>label {
+  font-weight: normal;
+  font-size: 14px;
+  margin: 0;
+}
+
+.create-event-form>div>input {
+  width: 200px;
+}
+
+.create-event-form>div>select {
+  width: 200px;
+}
+
+.create-event-form>.btn-container {
+  justify-content: center;
+}
+
+.create-event-form>.btn-container>button {
+  width: 200px;
+}
+
+.create-event-form>.error-label {
+  color: red;
+}
+
+.create-event-form #field_is_private {
+  justify-content: flex-start;
+}
+
+.create-event-form #field_is_private>input[type='checkbox'] {
+  width: 20px;
+}
+
+.event-info-header {
+  margin: 15px;
+}
+
+.event-info-container {
+  margin: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.event-info-container>ul>li {
+  margin: 3px 0;
+  padding: 3px 0;
 }
