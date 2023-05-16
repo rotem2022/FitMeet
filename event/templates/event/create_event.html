@@ -1,11 +1,24 @@
 {% extends 'base.html' %}
 {% block content %}
-<h1>Create Event</h1>
-<form id="event-form" method="post">
-    {% csrf_token %} {{ form.as_p }}
-    <button type="submit">Create</button>
-    {% if error %}
-    <label id="error-label" style="color: red;">{{error}}</label>
-    {% endif %}
-</form>
+<div class="create-event-form-header">
+    <h2>Create Event</h2>
+</div>
+<div class="create-event-form-container">
+    <form method="post" class="create-event-form">
+        {% csrf_token %}
+        {% for field in form %}
+        <div class="form-field" id="field_{{ field.name }}">
+            {{ field.label_tag }}
+            {{ field }}
+        </div>
+        {% endfor %}
+        <div class="btn-container">
+            <button type="submit">Create</button>
+        </div>
+
+        {% if error %}
+        <label class="error-label">{{error}}</label>
+        {% endif %}
+    </form>
+</div>
 {% endblock %}
