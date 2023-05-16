@@ -139,8 +139,6 @@ p {
   margin: 20px;
 }
 
-.create-event-form {}
-
 .create-event-form>div {
   display: flex;
   justify-content: space-between;
@@ -180,4 +178,19 @@ p {
 
 .create-event-form #field_is_private>input[type='checkbox'] {
   width: 20px;
+}
+
+.event-info-header {
+  margin: 15px;
+}
+
+.event-info-container {
+  margin: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.event-info-container>ul>li {
+  margin: 3px 0;
+  padding: 3px 0;
 }
