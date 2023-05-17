@@ -151,9 +151,10 @@ class TestTeamsModel:
         count_team1 = 0
         count_team2 = 0
         for user_event in generated_user_event_list:
-            if user_event.teamID.name == "Team1":
+            event_id = user_event.eventID
+            if user_event.teamID.name == f"{event_id}-Team1":
                 count_team1 += 1
-            elif user_event.teamID.name == "Team2":
+            elif user_event.teamID.name == f"{event_id}-Team2":
                 count_team2 += 1
         team_size = len(generated_user_event_list) // 2
         assert team_size == count_team1
