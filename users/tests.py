@@ -51,3 +51,8 @@ class TestProfileModel:
     def test_delete_user_deletes_profile(self, profile_user1):
         profile_user1.user.delete()
         assert profile_user1 not in Profile.objects.all()
+
+    def test_static_profile(self):
+        user = get_user_model().objects.filter(username='Danny').first()
+        profile = Profile.objects.filter(user=user).first()
+        assert profile.user == user
