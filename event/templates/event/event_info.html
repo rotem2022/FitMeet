@@ -12,6 +12,63 @@
         <li>Participants : {{event.participants_num}}/{{event.max_participants}}</li>
     </ul>
 </div>
+{% if team1|length == 0 %}
+<form id="event-form" method="post">
+
+    {% csrf_token %} {{ form.as_p }}
+    <button type="submit">Generate Teams</button>
+
+</form>
+{% else %}
+
+<style>
+    table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    th, td {
+        padding: 8px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+
+    th {
+        background-color: #f2f2f2;
+    }
+
+    ul {
+        margin: 0;
+        padding: 0;
+    }
+
+    li {
+        list-style-type: none;
+    }
+</style>
+
+<table>
+    <tr>
+        <th>Team 1</th>
+        <th>Team 2</th>
+    </tr>
+    <tr>
+        <td>
+            <ul>
+                {% for user in team1 %}
+                    <li>{{ user }}</li>
+                {% endfor %}
+            </ul>
+        </td>
+        <td>
+            <ul>
+                {% for user in team2 %}
+                    <li>{{ user }}</li>
+                {% endfor %}
+            </ul>
+        </td>
+    </tr>
+</table>
+{% endif %}
 {% endblock %}
 {% block poll_info %}{% endblock %}
-{% block teams_info %}{% endblock %}

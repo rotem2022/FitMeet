@@ -1,9 +1,10 @@
 from django.shortcuts import render, redirect
 from django.core.exceptions import ValidationError
 from .forms import EventForm
-from .models import Event
 from location.models import Location
 from category.models import Category
+from .models import Event, UserEvent
+from .models import Teams
 
 
 def create_event(request, user_id):
@@ -42,7 +43,24 @@ def create_event(request, user_id):
 def view_event(request, user_id):
     event_id = request.GET["id"]
     event = Event.manager.get(id=event_id)
-    return render(request, 'event/event_info.html', {'event': event})
+    if request.method == "POST":
+        Teams.generate_teams(event_id)
+
+    team1 = []
+    team2 = []
+    users_events = UserEvent.objects.filter(eventID=event_id)
+    if len(users_events) > 0 and users_events[0].teamID:
+        teams = list(set([user_event.teamID for user_event in users_events]))
+        team1 = [user.userID.user.username for user in
+                 UserEvent.objects.filter(teamID=teams[0].id)]
+        team2 = [user.userID.user.username for user in
+                 UserEvent.objects.filter(teamID=teams[1].id)]
+    context = {
+        'team1': team1,
+        'team2': team2,
+        'event': event
+    }
+    return render(request, 'event/event_info.html', context)
 
 
 def event_list(request, user_id):
@@ -64,3 +82,15 @@ def event_list(request, user_id):
     categories = Category.objects.values_list('name', flat=True)
     context = {'events': events, 'locations': locations, 'categories': categories, 'user_id': user_id}
     return render(request, 'event/all_events.html', context)
+
+
+def view_generate_teams(request):
+    event_id = request.GET["id"]
+    event = Event.manager.get(id=event_id)
+    team1, team2 = Teams.generate_teams(event_id)
+    context = {
+        'team1': team1,
+        'team2': team2,
+        'event': event
+    }
+    return render(request, 'event/event_info.html', context)
