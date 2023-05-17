@@ -1,11 +1,17 @@
 {% extends 'base.html' %}
 {% block content %}
-<h1>{{event.name}} Event</h1>
-<li>Category: {{event.category.name}}</li>
-<li>Location: {{event.location.city}}</li>
-<li>Starts At: {{event.start_time}}</li>
-<li>Ends At: {{event.end_time}}</li>
-<li>Participants : {{event.participants_num}}/{{event.max_participants}}</li>
+<div class="event-info-header">
+    <h2>{{event.name}} Event</h2>
+</div>
+<div class="event-info-container">
+    <ul>
+        <li>Category: {{event.category.name}}</li>
+        <li>Location: {{event.location.city}}</li>
+        <li>Starts At: {{event.start_time}}</li>
+        <li>Ends At: {{event.end_time}}</li>
+        <li>Participants : {{event.participants_num}}/{{event.max_participants}}</li>
+    </ul>
+</div>
 {% endblock %}
 {% block poll_info %}{% endblock %}
 {% block teams_info %}{% endblock %}
