@@ -108,6 +108,7 @@ form {
   flex-direction: column;
   max-width: 400px;
   margin: auto;
+
 }
 
 form label {
@@ -115,7 +116,9 @@ form label {
   margin-bottom: 0.5rem;
 }
 
-p { font-size: 26px; }
+p {
+  font-size: 26px;
+}
 
 .logo {
   border-radius: 50%;
