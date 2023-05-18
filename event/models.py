@@ -72,6 +72,7 @@ class EventManager(models.Manager):
     invalid_time_error_message = "Event end time cannot be equal or less than start time"
     invalid_poll_error = "Poll end time is later than the event start time"
     invalid_event_size_error = "Number of max participants exeeds the maximum"
+    use_in_migrations = True
 
     def __str__(self) -> str:
         return self.name
