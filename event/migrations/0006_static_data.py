@@ -31,15 +31,14 @@ def create_initial_events(apps, schema_editor):
          False, poll_end_time, 5, profile_danny)
     ]
 
-    manager = Event.manager
     with transaction.atomic():
         for cat, loc, name, max_part, event_start, event_end, is_private, poll_end_time, poll_suggestions, user_id in \
                 event_data:
-            manager.create_event(category_id=cat.id, location_id=loc.id, name=name,
-                                 max_participants=max_part, start_time=event_start,
-                                 end_time=event_end,
-                                 is_private=is_private, poll_end_time=poll_end_time,
-                                 poll_suggestions=poll_suggestions, user_id=user_id.id)
+            Event.manager.create_event(category_id=cat.id, location_id=loc.id, name=name,
+                                       max_participants=max_part, start_time=event_start,
+                                       end_time=event_end,
+                                       is_private=is_private, poll_end_time=poll_end_time,
+                                       poll_suggestions=poll_suggestions, user_id=user_id.id)
 
 
 class Migration(migrations.Migration):
