@@ -197,7 +197,7 @@ class TestEvent:
 
     @pytest.mark.parametrize(
         "categories,result",
-        [(['FootBall'], 5), (['FootBall', 'basketball'], 10), (['Baseball', 'gym', 'football'], 15), (['Chess'], 0)],
+        [(['FootBall'], 5), (['FootBall', 'basketball'], 11), (['Baseball', 'gym', 'football'], 15), (['Chess'], 0)],
     )
     def test_filter_by_category(self, categories, result, event_data_set):
         query_set = models.Event.manager.search(categories=categories)
@@ -227,9 +227,9 @@ class TestEvent:
     @pytest.mark.parametrize(
         "event_size,result",
         [
-            ((8, True), 21),
+            ((8, True), 23),
             ((20, True), 15),
-            ((50, False), 25),
+            ((50, False), 27),
             ((1, False), 0),
         ],
     )
@@ -240,9 +240,9 @@ class TestEvent:
     @pytest.mark.parametrize(
         "event_time,result",
         [
-            ((timezone.now() + timedelta(days=2), True), 20),
+            ((timezone.now() + timedelta(days=2), True), 22),
             ((timezone.now() + timedelta(days=9), True), 10),
-            ((timezone.now() + timedelta(weeks=2), False), 20),
+            ((timezone.now() + timedelta(weeks=2), False), 22),
             ((timezone.now() + timedelta(weeks=4), True), 0),
         ],
     )
@@ -266,9 +266,9 @@ class TestEvent:
     @pytest.mark.parametrize(
         "event_time, event_size,result",
         [
-            ((timezone.now() + timedelta(days=2), True), (8, True), 17),
+            ((timezone.now() + timedelta(days=2), True), (8, True), 19),
             ((timezone.now() + timedelta(days=9), True), (20, True), 6),
-            ((timezone.now() + timedelta(weeks=2), False), (50, False), 20),
+            ((timezone.now() + timedelta(weeks=2), False), (50, False), 22),
         ],
     )
     def test_filter_by_event_time_and_size(self, event_time, event_size, result):
@@ -277,4 +277,11 @@ class TestEvent:
 
     def test_empty_filter(self):
         query_set = models.Event.manager.search()
-        assert len(query_set) == 25
+        assert len(query_set) == 27
+
+    def test_static_event(self):
+        event = models.Event.manager.search(categories=["Soccer"], location_names=["Bloomfield"]).first()
+        category = models.Category.objects.filter(name="Soccer").first()
+        location = models.Location.objects.filter(name="Bloomfield").first()
+        assert event.category == category
+        assert event.location == location

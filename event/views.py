@@ -2,6 +2,8 @@ from django.shortcuts import render, redirect
 from django.core.exceptions import ValidationError
 from .forms import EventForm
 from .models import Event
+from location.models import Location
+from category.models import Category
 
 
 def create_event(request, user_id):
@@ -41,3 +43,24 @@ def view_event(request, user_id):
     event_id = request.GET["id"]
     event = Event.manager.get(id=event_id)
     return render(request, 'event/event_info.html', {'event': event})
+
+
+def event_list(request, user_id):
+    events = Event.manager.all()
+    if request.method == "GET":
+        if 'Choose_filter' in request.GET:
+            filter_type = request.GET.get('Choose_filter')
+
+            if filter_type == 'Category' and 'Choose_Category' in request.GET:
+                category = request.GET.get('Choose_Category')
+                events = events.filter(category__name=category)
+            elif filter_type == 'Location' and 'Choose_Location' in request.GET:
+                location = request.GET.get('Choose_Location')
+                events = events.filter(location__name=location)
+
+    user_id = request.user.id if request.user.is_authenticated else None
+
+    locations = Location.objects.values_list('name', flat=True)
+    categories = Category.objects.values_list('name', flat=True)
+    context = {'events': events, 'locations': locations, 'categories': categories, 'user_id': user_id}
+    return render(request, 'event/all_events.html', context)
