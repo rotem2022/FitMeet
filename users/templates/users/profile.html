@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="content-section">
+        <h2 class="account-heading" style="font-weight: bold; font-size: 36px;">{{ user.username }}</h2>
+        <br><br>
+        <div style="text-align: center;">
+            <p><strong>First Name:</strong> {{ user.first_name }}</p>
+            <p><strong>Last Name:</strong> {{ user.last_name }}</p>
+            <p><strong>Email:</strong> {{ user.email }}</p>
+            <p><strong>Date of Birth:</strong> {{ user.profile.date_of_birth|date:"Y-m-d" }}</p>
+            <p><strong>Phone Number:</strong> {{ user.profile.phone_number }}</p>
+            {% if user.profile.image_url %}
+                <img src="{{ user.profile.image_url }}" alt="Profile Image">
+            {% endif %}
+        </div>
+    </div>
+{% endblock content %}
