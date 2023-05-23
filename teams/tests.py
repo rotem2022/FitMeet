@@ -159,3 +159,27 @@ class TestTeamsModel:
         team_size = len(generated_user_event_list) // 2
         assert team_size == count_team1
         assert len(generated_user_event_list) - team_size == count_team2
+
+
+@pytest.mark.django_db
+class TestUI:
+
+    def test_generate_teams_button(self, create_event, user_event_list, client):
+        event_id = create_event.pk
+        client.force_login(user_event_list[0].userID.user)
+
+        url = f'/{user_event_list[0].userID.user.pk}/event/generate_teams/?id={event_id}'
+        client.post(url)
+
+        generated_user_event_list = UserEvent.objects.filter(eventID=create_event)
+        assert len(generated_user_event_list) == len(user_event_list)
+        count_team1 = 0
+        count_team2 = 0
+        for user_event in generated_user_event_list:
+            if user_event.teamID.name == f"{event_id}-Team1":
+                count_team1 += 1
+            elif user_event.teamID.name == f"{event_id}-Team2":
+                count_team2 += 1
+        team_size = len(generated_user_event_list) // 2
+        assert team_size == count_team1
+        assert len(generated_user_event_list) - team_size == count_team2
