@@ -84,7 +84,7 @@ def event_list(request, user_id):
     return render(request, 'event/all_events.html', context)
 
 
-def view_generate_teams(request):
+def view_generate_teams(request, user_id):
     event_id = request.GET["id"]
     event = Event.manager.get(id=event_id)
     team1, team2 = Teams.generate_teams(event_id)
