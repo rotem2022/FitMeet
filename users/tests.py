@@ -29,9 +29,9 @@ class TestProfileModel:
         new_profile = Profile.objects.get(user=profile_user1.user)
         assert new_profile.phone_number == PHONE_NUMBER
 
-    def test_profile_image_url(self, profile_user1):
+    def test_profile_image(self, profile_user1):
         new_profile = Profile.objects.get(user=profile_user1.user)
-        assert new_profile.image_url == ''
+        assert str(new_profile.image) == 'default.jpg'
 
     def test_profile_string_representation(self, profile_user1):
         new_profile = Profile.objects.get(user=profile_user1.user)

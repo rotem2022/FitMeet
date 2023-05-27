@@ -41,7 +41,7 @@ def category_location1(category1, location1):
 def user1():
     user = User.objects.create_user(username='test', password='test', email='myemail@example.com')
     profile = models.Profile(
-        user=user, date_of_birth=timezone.now(), phone_number="test", image_url="http://127.0.0.1:8000/"
+        user=user, date_of_birth=timezone.now(), phone_number="test", image='default.jpg'
     )
     profile.save()
     return profile
@@ -51,7 +51,7 @@ def user1():
 def user2():
     user = User.objects.create_user(username='test1', password='test1', email='myemail1@example.com')
     profile = models.Profile(
-        user=user, date_of_birth=timezone.now(), phone_number="test1", image_url="http://127.0.0.1:8001/"
+        user=user, date_of_birth=timezone.now(), phone_number="test1", image='default.jpg'
     )
     profile.save()
     return profile
@@ -140,7 +140,7 @@ def users1(django_db_blocker) -> List[models.Profile]:
         for i in range(25):
             user = User.objects.create_user(username=f'user{i}', password=f'password{i}', email=f'user{i}@example.com')
             profile = models.Profile(
-                user=user, date_of_birth=timezone.now(), phone_number=f"user{i}", image_url="http://127.0.0.1:8001/"
+                user=user, date_of_birth=timezone.now(), phone_number=f"user{i}", image='default.jpg'
             )
             profile.save()
             users.append(profile)
