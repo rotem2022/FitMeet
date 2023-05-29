@@ -18,9 +18,7 @@ def create_initial_users(apps, schema_editor):
     with transaction.atomic():
         for username, password, dob, phone_number, last_name in profile_data:
             encrypted_pw = make_password(password)
-            user = User(username=username, password=encrypted_pw)
-            user.first_name = username
-            user.last_name = last_name
+            user = User(username=username, password=encrypted_pw, first_name=username, last_name=last_name)
             user.save()
             profile = Profile(user=user, date_of_birth=dob, phone_number=phone_number)
             profile.save()
