@@ -1,6 +1,7 @@
 from datetime import date
 import pytest
 from django.contrib.auth import get_user_model
+
 from users.models import Profile
 
 USER_NAME = 'testuser'
@@ -53,6 +54,8 @@ class TestProfileModel:
         assert profile_user1 not in Profile.objects.all()
 
     def test_static_profile(self):
+        password = 'dannyPassword'
         user = get_user_model().objects.filter(username='Danny').first()
         profile = Profile.objects.filter(user=user).first()
         assert profile.user == user
+        assert profile.user.check_password(password)
