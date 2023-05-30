@@ -14,7 +14,7 @@
 </div>
 {% if event.participants_num > 1 %}
     {% if team1|length == 0 %}
-        <form id="event-form" method="post">
+        <form id="event-form" method="post" >
             {% csrf_token %} {{ form.as_p }}
             <button class ="EventButton" type="submit">Generate Teams</button>
         </form>
