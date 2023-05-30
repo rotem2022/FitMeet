@@ -16,10 +16,10 @@
     {% if team1|length == 0 %}
         <form id="event-form" method="post">
             {% csrf_token %} {{ form.as_p }}
-            <button type="submit">Generate Teams</button>
+            <button class ="EventButton" type="submit">Generate Teams</button>
         </form>
     {% else %}
-        <div class="teams-table">
+        <div class="form-label">
             <table>
                 <tr>
                     <th>Team 1</th>
