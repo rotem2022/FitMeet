@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'event.apps.EventConfig',
     'teams.apps.TeamsConfig',
     'poll_suggestion.apps.PollSuggestionConfig',
+    'crispy_forms',
 ]
 
 MIDDLEWARE = [
