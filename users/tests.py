@@ -2,7 +2,6 @@ from datetime import date
 import pytest
 from django.contrib.auth import get_user_model
 from django.urls import reverse
-from django.test import Client
 from users.models import Profile
 from users.forms import UserUpdateForm, ProfileUpdateForm
 
@@ -26,11 +25,6 @@ def profile_user1(user1):
     profile_user = Profile.objects.create(user=user1, date_of_birth=date.today(), phone_number=PHONE_NUMBER)
     profile_user.save()
     return profile_user
-
-
-@pytest.fixture
-def client():
-    return Client()
 
 
 @pytest.mark.django_db()
