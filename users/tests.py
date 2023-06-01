@@ -1,10 +1,15 @@
 from datetime import date
 import pytest
 from django.contrib.auth import get_user_model
-
+from django.urls import reverse
+from django.test import Client
 from users.models import Profile
+from users.forms import UserUpdateForm, ProfileUpdateForm
+
 
 USER_NAME = 'testuser'
+USER_NAME_NEW = 'newusername'
+EMAIL = 'newemail@example.com'
 USER_PASSWORD = 'testpass'
 PHONE_NUMBER = '1234567890'
 PHONE_NUMBER_NEW = '0987654321'
@@ -13,7 +18,6 @@ PHONE_NUMBER_NEW = '0987654321'
 @pytest.fixture
 def user1():
     user = get_user_model().objects.create(username=USER_NAME, password=USER_PASSWORD)
-    user.save()
     return user
 
 
@@ -22,6 +26,11 @@ def profile_user1(user1):
     profile_user = Profile.objects.create(user=user1, date_of_birth=date.today(), phone_number=PHONE_NUMBER)
     profile_user.save()
     return profile_user
+
+
+@pytest.fixture
+def client():
+    return Client()
 
 
 @pytest.mark.django_db()
@@ -59,3 +68,28 @@ class TestProfileModel:
         profile = Profile.objects.filter(user=user).first()
         assert profile.user == user
         assert profile.user.check_password(password)
+
+
+@pytest.mark.django_db
+class TestProfileUpdate:
+    def test_profile_update_view(self, client, user1, profile_user1):
+        # Login the user
+        client.force_login(user1)
+
+        url = reverse('profile')
+        response = client.get(url)
+        assert response.status_code == 200
+        assert isinstance(response.context['u_form'], UserUpdateForm)
+        assert isinstance(response.context['p_form'], ProfileUpdateForm)
+
+        data = {
+            'username': USER_NAME_NEW,
+            'email': EMAIL,
+        }
+        response = client.post(url, data)
+        assert response.status_code == 302
+        assert response.url == reverse('profile')
+        updated_user = get_user_model().objects.get(username=USER_NAME_NEW)
+        assert updated_user.email == EMAIL
+        updated_profile = Profile.objects.get(user=updated_user)
+        assert updated_profile.phone_number == PHONE_NUMBER  # Assert that phone_number is not changed
