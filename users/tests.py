@@ -29,14 +29,12 @@ def profile_user1(user1):
 
 @pytest.fixture
 def user2():
-    user = get_user_model().objects.filter(username='Danny').first()
-    return user
+    return get_user_model().objects.filter(username='Danny').first()
 
 
 @pytest.fixture
 def profile_user2(user2):
-    profile = Profile.objects.filter(user=user2).first()
-    return profile
+    return Profile.objects.filter(user=user2).first()
 
 
 @pytest.mark.django_db()
