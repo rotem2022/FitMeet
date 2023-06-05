@@ -37,4 +37,33 @@
             </div>
         </form>
     </div>
+    {% for event in events %}
+    <div class="EventCont">
+        <div class="Event">
+            <div class="HeadingBackground">
+                <h2 class="EventHeading">{{ event.name }}</h2>
+            </div>
+
+            <div class="EventDetailsContainer">
+                <div class="EventsDetails-left">
+                    <p><span class="EventLabel">Category:</span><span class="EventResult">{{ event.category }}</span>
+                    </p>
+                    <p><span class="EventLabel">Location: </span><span class="EventResult">{{ event.location }}</span>
+                    </p>
+                </div>
+                <div class="EventsDetails-right">
+                    <p>
+                        <span class="EventLabel">Start Time: </span>
+                        <span class="EventResult">{{ event.start_time}}</span>
+                    </p>
+                    <p><span class="EventLabel">End Time: </span><span class="EventResult">{{ event.end_time }}</span>
+                    </p>
+                    <p><span class="EventLabel">Participants: </span><span
+                            class="EventResult">{{event.participants_num}}/{{event.max_participants}}</span></p>
+                </div>
+            </div>
+            <button class="EventButton"><a href="{% url 'view_event' user_id=user_id %}?id={{ event.id }}">Open Event</a></button>
+        </div>
+    </div>
+    {% endfor %}
 {% endblock content %}

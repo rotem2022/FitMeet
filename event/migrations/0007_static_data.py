@@ -6,27 +6,19 @@ def create_initial_events(apps, schema_editor):
     User = apps.get_model('auth', 'User')
     Event = apps.get_model('event', 'Event')
 
-    user_danny = User.objects.filter(username='Danny').first()
-    profile_danny = Profile.objects.filter(user=user_danny).first()
-    user_ofek = User.objects.filter(username='Ofek').first()
-    profile_ofek = Profile.objects.filter(user=user_ofek).first()
-    user_rotem = User.objects.filter(username='Rotem').first()
-    profile_rotem = Profile.objects.filter(user=user_rotem).first()
-    user_saar = User.objects.filter(username='Saar').first()
-    profile_saar = Profile.objects.filter(user=user_saar).first()
-    user_Tal = User.objects.filter(username='Tal').first()
-    profile_Tal = Profile.objects.filter(user=user_Tal).first()
-
     user_event = [
-        (profile_ofek, 1),
-        (profile_danny, 1),
-        (profile_rotem, 1),
-        (profile_saar, 1),
-        (profile_Tal, 1),
+        ('Ofek', 2),
+        ('Danny', 1),
+        ('Rotem', 1),
+        ('Saar', 1),
+        ('Tal', 1),
+        ('Rimon', 2),
 
     ]
     with transaction.atomic():
-        for profile, event_id in user_event:
+        for username, event_id in user_event:
+            user = User.objects.filter(username=username).first()
+            profile = Profile.objects.filter(user=user).first()
             Event.manager.join_event(user_id=profile.pk, event_id=event_id)
 
 

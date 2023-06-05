@@ -2,9 +2,9 @@ from datetime import date
 import pytest
 from django.contrib.auth import get_user_model
 from django.urls import reverse
+from event.models import UserEvent
 from users.models import Profile
 from users.forms import UserUpdateForm, ProfileUpdateForm
-
 
 USER_NAME = 'testuser'
 USER_NAME_NEW = 'newusername'
@@ -25,6 +25,16 @@ def profile_user1(user1):
     profile_user = Profile.objects.create(user=user1, date_of_birth=date.today(), phone_number=PHONE_NUMBER)
     profile_user.save()
     return profile_user
+
+
+@pytest.fixture
+def user2():
+    return get_user_model().objects.filter(username='Danny').first()
+
+
+@pytest.fixture
+def profile_user2(user2):
+    return Profile.objects.filter(user=user2).first()
 
 
 @pytest.mark.django_db()
@@ -87,3 +97,18 @@ class TestProfileUpdate:
         assert updated_user.email == EMAIL
         updated_profile = Profile.objects.get(user=updated_user)
         assert updated_profile.phone_number == PHONE_NUMBER  # Assert that phone_number is not changed
+
+
+@pytest.mark.django_db
+class TestUsersEventList:
+
+    def test_my_events(self, client, user2, profile_user2):
+        user_events = UserEvent.objects.filter(userID=profile_user2)
+        events = [user_event.eventID for user_event in user_events]
+        client.force_login(user2)
+        url = reverse('profile')
+        response = client.get(url)
+        assert response.status_code == 200
+        resp_content = response.content.decode()
+        for event in events:
+            assert event.name in resp_content
