@@ -26,6 +26,16 @@
         {% if is_joined %}
             <button class="btn btn-outline-info" id="join-leave-btn">
                 <a href="{% url 'view_event' user_id=user.id %}?id={{ event.id }}&join=0">Leave</a>
+<div class="event-info-header">
+    <h2 id="title">{{event.name}} Event</h2>
+    {%if is_joined %}
+        <button id="join-leave-btn">
+            <a href="{% url 'view_event' user_id=profile.id %}?id={{ event.id }}&join=0">Leave</a>
+        </button>
+    {%else %}
+        {% if event.participants_num < event.max_participants %} 
+            <button id="join-leave-btn">
+                <a href="{% url 'view_event' user_id=profile.id %}?id={{ event.id }}&join=1">Join</a>
             </button>
         {% else %}
             {% if event.participants_num < event.max_participants %} 

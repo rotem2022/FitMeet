@@ -68,7 +68,7 @@ def view_event(request, user_id):
         'team1': team1,
         'team2': team2,
         'event': event,
-        'user': user,
+        'profile': user,
         'is_joined': is_joined,
     }
     return render(request, 'event/event_info.html', context)
@@ -103,5 +103,5 @@ def view_generate_teams(request, user_id):
     event_id = request.GET["id"]
     event = Event.manager.get(id=event_id)
     team1, team2 = Teams.generate_teams(event_id)
-    context = {'team1': team1, 'team2': team2, 'event': event}
+    context = {'team1': team1, 'team2': team2, 'event': event, 'profile': request.user}
     return render(request, 'event/event_info.html', context)
