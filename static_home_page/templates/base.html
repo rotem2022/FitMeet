@@ -6,7 +6,6 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FitMeet</title>
     <link rel="stylesheet" href="{% static 'web_page_css.css' %}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,8 +13,17 @@
 </head>
 
 <body>
-    <header>
-        <h1 style="color: darkcyan;">FitMeet</h1>
+    <header style="display: flex; justify-content: space-between; align-items: center;">
+        <div style="color: darkcyan; flex: 0.2; text-align: left;">
+            {% if user.is_authenticated %}
+                <h1>Hello {{ user }}</h1>
+            {% endif %}      
+        </div>
+    
+        <div style="color: darkcyan; text-align: center;">
+            <h1>FitMeet</h1>      
+        </div>
+       
         <nav>
             <ul>
                 <li><a href="/">About</a></li>              

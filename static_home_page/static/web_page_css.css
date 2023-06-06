@@ -10,6 +10,7 @@ body {
   background-image: url("Background.webp");
   background-repeat: no-repeat;
   background-size: cover;
+  font-family: 'Poppins', sans-serif;
 }
 
 /* Style the header */
@@ -244,10 +245,14 @@ p {
 
 .create-event-form-header {
   margin: 15px;
+  font-size: 2rem;
+  transform: translateX(0px);
+  animation: float 1s ease-out;
 }
 
 .create-event-form-container {
   margin: 20px;
+  
 }
 
 .create-event-form>div {
@@ -259,7 +264,7 @@ p {
 
 .create-event-form>div>label {
   font-weight: normal;
-  font-size: 14px;
+  font-size: 20px;
   margin: 0;
 }
 
